@@ -1,0 +1,4 @@
+name = "Qtrs"
+uuid = "9fe97fce-93d3-41af-8a0c-983707811f7f"
+authors = ["Danny Winrow <dwinrow@boal.co.uk>"]
+version = "0.1.0"
