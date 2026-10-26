@@ -1,10 +1,13 @@
 module Qtrs
 
-export Qtr,quartersbetween,previousyearend,previousquarter
+export Qtr,quartersbetween,previousyearend,previousquarter, @q_str, yearsbetween
 
 import Dates
 import Base
 
+macro q_str(s)
+    Qtr(s)
+end
 struct Qtr
     date::Dates.Date
     Qtr(date::Dates.Date) = new(Dates.lastdayofquarter(date))
@@ -12,24 +15,20 @@ end
 Qtr(q::String) = Qtr(Dates.lastdayofquarter(Dates.Date(parse(Int,q[1:4]),parse(Int,q[end])*3,1)))
 Qtr(qtrsoffset::Int=-1,date::Dates.Date=Dates.today()) = previousquarter(Qtr(date),qtrsoffset)
 quartersbetween(qtrs::Pair) = quartersbetween(Qtr(qtrs[1])=>Qtr(qtrs[2]))
-function quartersbetween(qtrs::Pair{Qtr,Qtr})
-    ret = Qtr[]
-    qtr = qtrs[1]
-    while qtr <= qtrs[2]
-        push!(ret,qtr)
-        qtr += Dates.Quarter(1)
-    end
-    ret
-end
+quartersbetween(qtrs::Pair{Qtr,Qtr}) = qtrs[1]:Dates.Quarter(1):qtrs[2]
+yearsbetween(qtrs::Pair{Qtr,Qtr}) = qtrs[1]:Dates.Year(1):qtrs[2]
+
 Dates.quarter(q::Qtr) = Dates.quarter(q.date)
 Dates.year(q::Qtr) = Dates.year(q.date)
 Base.string(q::Qtr) = "$(Dates.year(q))Q$(Dates.quarter(q))"
 Base.:-(q::Qtr,r::Qtr) = Dates.Quarter(Dates.year(q.date) * 4 + Dates.quarter(q.date) - Dates.year(r.date) * 4 - Dates.quarter(r.date))
 Base.:+(q::Qtr,r::Dates.Quarter) = Qtr(q.date + r)
+Base.:-(r::Dates.Date,q::Qtr) = r - q.date
 Base.:-(q::Qtr,r::Dates.Quarter) = Qtr(q.date - r)
 Base.:+(q::Qtr,r::Dates.Year) = Qtr(q.date + r)
 Base.:-(q::Qtr,r::Dates.Year) = Qtr(q.date - r)
 Base.:<(q::Qtr,r::Qtr) = q.date < r.date
+Base.isless(q::Qtr,r::Qtr) = q.date < r.date
 Base.show(io::IO, q::Qtr) = print(io, string(q))
 Base.show(io::IO, ::MIME"text/plain", q::Qtr) = show(io, q)
 
