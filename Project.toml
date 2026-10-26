@@ -1,7 +1,7 @@
 name = "Qtrs"
 uuid = "9fe97fce-93d3-41af-8a0c-983707811f7f"
 authors = ["Danny Winrow <dwinrow@boal.co.uk>"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
